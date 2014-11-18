@@ -1,9 +1,5 @@
 "use strict";
 
-document.addEventListener('DOMContentLoaded', initial);
-document.getElementById("occupation").addEventListener('click', initial);
-document.getElementById("signUp").addEventListener('submit', formValidation);
-
 function initial() {
 	var list = document.getElementsByName("state");
 	for(var i = 0; i < usStates.length; i++){
@@ -13,26 +9,33 @@ function initial() {
 		list[0].appendChild(single);
 	}
 
-	var x = document.getElementById("occupation").value;
-	if(x == "other") {
-		other.style.display = 'inline';
-	} else {
-		other.style.display = 'none';
+	var other = document.getElementById('signup').elements['occupationOther'];
+	var occupationType = document.getElementById("occupation").value;
+
+	function otherTest() {
+		if(occupationType == "other") {
+			other.style.display = 'inline';
+		} else {
+			other.style.display = 'none';
+		}
 	}
 
 	var confirmation = document.getElementById("cancelButton");
-	var submission = document.getElementById("signUp")
-	
+	var submission = document.getElementById("signUp");
+	var occupationChange = document.getElementById("occupation");
+
 	function confirm() {
 		var popUp = window.confirm("Are you sure???");
-		if(popUp == true) {
+		if(popUp === true) {
 			location.replace("http://www.google.com");
 		}
 		
 	}
+
 	confirmation.addEventListener('click', confirm);
-	submission.addEventListener('submit', submitCheck);
-	
+	occupationChange.addEventListener('click', otherTest);
+	submission.addEventListener('submit', submitCheck);	
+
 }
 
 function submitCheck(evt) {
@@ -50,7 +53,7 @@ function validateForm(form) {
 }
 
 function validateRequiredField(field) {
-    if (0 == this[field].value.trim().length) {
+    if (0 === this[field].value.trim().length) {
         this[field].className = 'invalid-field form-control';
         return false;
     } else {
@@ -59,7 +62,7 @@ function validateRequiredField(field) {
     }
 }
 
-
+document.addEventListener('DOMContentLoaded', initial);
 
 
 
