@@ -10,18 +10,18 @@ function initial() {
 	}
 
 	var other = document.getElementById('signup').elements['occupationOther'];
-	var occupationType = document.getElementById("occupation").value;
+	var occupationType = document.getElementById("occupation");
 
 	function otherTest() {
-		if(occupationType == "other") {
-			other.style.display = 'inline';
+		if(occupationType.value == "other") {
+			other.style.display = 'block';
 		} else {
 			other.style.display = 'none';
 		}
 	}
 
 	var confirmation = document.getElementById("cancelButton");
-	var submission = document.getElementById("signUp");
+	var submission = document.getElementById("signup");
 	var occupationChange = document.getElementById("occupation");
 
 	function confirm() {
@@ -33,23 +33,54 @@ function initial() {
 	}
 
 	confirmation.addEventListener('click', confirm);
-	occupationChange.addEventListener('click', otherTest);
+	occupationChange.addEventListener('change', otherTest);
 	submission.addEventListener('submit', submitCheck);	
-
 }
 
 function submitCheck(evt) {
-	var valid = validateForm(this);
-	if (!valid && evt.preventDefault) {
+	evt.returnValue = validateForm(this);
+	var enteredBirthday = document.getElementById('birthdate').value;
+	var enteredZip = document.getElementById('zip').value;
+
+	try{
+		ageCalculate(enteredBirthday);
+	}
+
+	catch(exception){
+		alert('Invalid Birthday');
+	}
+
+	try {
+		zipValidator(enteredZip);
+	}
+
+	catch(exception) {
+		alert('Invalid Zip Code');
+	}
+
+	if (!evt.returnValue && evt.preventDefault) {
         evt.preventDefault();
     }
-    evt.returnValue = valid;
-    return valid;
+    return evt.returnValue;
 }
 
 function validateForm(form) {
-    var requiredFields = ['firstName', 'lastName', 'address1', 'city', 'state', 'zip', 'birthdate'];
+	var requiredFields = ['firstName', 'lastName', 'address1', 'city', 'state', 'zip', 'birthdate'];
+	if(document.getElementById("occupation").value === 'other') {
+   		requiredFields.push('occupationOther');
+   	} else {
+   		if(requiredFields.length === 8){
+   			requiredFields.pop();
+   		}
+   	}
     requiredFields.forEach(validateRequiredField, form);
+}
+
+function zipValidator(enteredZip) {
+	var zipRegExp = new RegExp('^\\d{5}$');
+	if(!zipRegExp.test(enteredZip)){
+		throw new Error();
+	}
 }
 
 function validateRequiredField(field) {
@@ -60,6 +91,21 @@ function validateRequiredField(field) {
         this[field].className = 'form-control';
         return true;
     }
+}
+
+function ageCalculate(dob) {
+	dob = new Date(dob);
+	var today = new Date();
+	var yearSubtraction = today.getFullYear() - dob.getUTCFullYear();
+	var monthSubtraction = today.getMonth() - dob.getUTCMonth();
+	var daySubtraction = today.getDate() - dob.getUTCDate();
+
+	if(monthSubtraction > 0 || (0 === monthSubtraction && daySubtraction < 0)) {
+		yearSubtraction--;
+	}
+	if (yearSubtraction < 13) {
+		throw new Error();
+	}
 }
 
 document.addEventListener('DOMContentLoaded', initial);

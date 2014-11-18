@@ -16,7 +16,3 @@ form input[name='occupationOther'] {
     border: 1px solid #FF0000;
 }
 
-.required-field:after {
-    content: ' *';
-    color: #FF0000;
-}
